@@ -1,0 +1,302 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// primary model
+model Category {
+  id        Int        @id @default(autoincrement()) @db.UnsignedInt
+  parentId  Int?       @map("parent_id") @db.UnsignedInt
+  name      String     @db.VarChar(100)
+  slug      String     @db.VarChar(150)
+  status    BaseStatus @default(ACTIVE)
+  createdBy Int?       @map("created_by") @db.UnsignedInt
+  updatedBy Int?       @map("updated_by") @db.UnsignedInt
+  createdAt DateTime   @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt DateTime   @default(now()) @map("updated_at") @db.DateTime(0)
+  deletedAt DateTime?  @map("deleted_at") @db.DateTime(0)
+
+  parent            Category?          @relation("categoryDescendants", fields: [parentId], references: [id], onUpdate: NoAction)
+  children          Category[]         @relation("categoryDescendants")
+  categoryRelations CategoryRelation[]
+
+  @@unique([slug])
+  @@index([parentId])
+  @@map("categories")
+}
+
+model Comment {
+  id         Int             @id @default(autoincrement()) @db.UnsignedInt
+  contentId  Int             @map("content_id") @db.UnsignedInt
+  parentId   Int?            @map("parent_id") @db.UnsignedInt
+  status     CommentStatus   @default(APPROVED)
+  priority   CommentPriority @default(MEDIUM)
+  detail     String          @db.Text
+  createdBy  Int?            @map("created_by") @db.UnsignedInt
+  updatedBy  Int?            @map("updated_by") @db.UnsignedInt
+  acceptedBy Int?            @map("accepted_by") @db.UnsignedInt
+  createdAt  DateTime        @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt  DateTime        @default(now()) @map("updated_at") @db.DateTime(0)
+  deletedAt  DateTime?       @map("deleted_at") @db.DateTime(0)
+
+  parent    Comment?   @relation("commentDescendants", fields: [parentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  children  Comment[]  @relation("commentDescendants")
+  content   Content    @relation(fields: [contentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  acceptor  User?      @relation("commentAcceptor", fields: [acceptedBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  creator   User?      @relation("commentCreator", fields: [createdBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  reactions Reaction[]
+
+  @@index([contentId])
+  @@index([acceptedBy])
+  @@index([createdBy])
+  @@index([parentId])
+  @@map("comments")
+}
+
+model Content {
+  id         Int             @id @default(autoincrement()) @db.UnsignedInt
+  title      String          @db.VarChar(200)
+  slug       String          @db.VarChar(250)
+  summary    String          @db.VarChar(500)
+  detail     String          @db.Text
+  status     ContentStatus   @default(DRAFT)
+  priority   ContentPriority @default(MEDIUM)
+  type       ContentType     @default(ARTICLE)
+  createdBy  Int?            @map("created_by") @db.UnsignedInt
+  updatedBy  Int?            @map("updated_by") @db.UnsignedInt
+  releasedBy Int?            @map("released_by") @db.UnsignedInt
+  releasedAt DateTime        @default(now()) @map("released_at") @db.DateTime(0)
+  expiredAt  DateTime?       @map("expired_at") @db.DateTime(0)
+  createdAt  DateTime        @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt  DateTime        @default(now()) @map("updated_at") @db.DateTime(0)
+  deletedAt  DateTime?       @map("deleted_at") @db.DateTime(0)
+
+  releaser          User?              @relation("contentReleaser", fields: [releasedBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  creator           User?              @relation("contentCreator", fields: [createdBy], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  comments          Comment[]
+  reactions         Reaction[]
+  categoryRelations CategoryRelation[]
+  mediaRelations    MediaRelation[]
+  tagRelations      TagRelation[]
+
+  @@unique([slug])
+  @@index([releasedBy])
+  @@index([createdBy])
+  @@map("contents")
+}
+
+model Media {
+  id           Int        @id @default(autoincrement()) @db.UnsignedInt
+  originalName String     @map("original_name") @db.VarChar(255)
+  filename     String     @db.VarChar(255)
+  type         String     @db.VarChar(50)
+  mimetype     String     @db.VarChar(100)
+  url          String     @db.VarChar(500)
+  properties   Json?
+  status       BaseStatus @default(ACTIVE)
+  createdBy    Int?       @map("created_by") @db.UnsignedInt
+  updatedBy    Int?       @map("updated_by") @db.UnsignedInt
+  createdAt    DateTime   @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt    DateTime   @default(now()) @map("updated_at") @db.DateTime(0)
+  deletedAt    DateTime?  @map("deleted_at") @db.DateTime()
+
+  mediaRelations MediaRelation[]
+
+  @@map("media")
+}
+
+model Reaction {
+  id        Int          @id @default(autoincrement()) @db.UnsignedInt
+  contentId Int          @map("content_id") @db.UnsignedInt
+  commentId Int?         @map("comment_id") @db.UnsignedInt
+  type      ReactionType @default(LIKE)
+  createdBy Int?         @map("created_by") @db.UnsignedInt
+  createdAt DateTime     @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt DateTime     @default(now()) @map("updated_at") @db.DateTime(0)
+  deletedAt DateTime?    @map("deleted_at") @db.DateTime()
+
+  content Content  @relation(fields: [contentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user    User?    @relation(fields: [createdBy], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  comment Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([contentId])
+  @@index([createdBy])
+  @@index([commentId])
+  @@map("reactions")
+}
+
+model Tag {
+  id        Int        @id @default(autoincrement()) @db.UnsignedInt
+  name      String     @db.VarChar(50)
+  slug      String     @db.VarChar(100)
+  status    BaseStatus @default(ACTIVE)
+  createdBy Int?       @map("created_by") @db.UnsignedInt
+  updatedBy Int?       @map("updated_by") @db.UnsignedInt
+  createdAt DateTime   @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt DateTime   @default(now()) @map("updated_at") @db.DateTime(0)
+  deletedAt DateTime?  @map("deleted_at") @db.DateTime()
+
+  tagRelations TagRelation[]
+
+  @@unique([slug])
+  @@map("tags")
+}
+
+model User {
+  id        Int        @id @default(autoincrement()) @db.UnsignedInt
+  role      UserRole   @default(USER)
+  firstName String     @map("first_name") @db.VarChar(255)
+  lastName  String     @map("last_name") @db.VarChar(255)
+  username  String     @db.VarChar(255)
+  password  String?    @db.VarChar(255)
+  email     String?    @db.VarChar(255)
+  status    UserStatus @default(ACTIVE)
+  createdBy Int?       @map("created_by") @db.UnsignedInt
+  updatedBy Int?       @map("updated_by") @db.UnsignedInt
+  createdAt DateTime   @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt DateTime   @default(now()) @map("updated_at") @db.DateTime(0)
+  deletedAt DateTime?  @map("deleted_at") @db.DateTime()
+
+  createdComments  Comment[]  @relation("commentCreator")
+  acceptedComments Comment[]  @relation("commentAcceptor")
+  releasedContents Content[]  @relation("contentReleaser")
+  createdContents  Content[]  @relation("contentCreator")
+  reactions        Reaction[]
+
+  @@unique([username])
+  @@unique([email])
+  @@map("users")
+}
+
+// relation model
+model CategoryRelation {
+  categoryId Int          @map("category_id") @db.UnsignedInt
+  relationId Int          @map("relation_id") @db.UnsignedInt
+  type       ResourceType
+  assignedAt DateTime     @default(now()) @map("assigned_at") @db.DateTime(0)
+
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  content  Content  @relation(fields: [relationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([categoryId, relationId])
+  @@unique([categoryId, relationId, type])
+  @@index([relationId])
+  @@map("category_relations")
+}
+
+model TagRelation {
+  tagId      Int          @map("tag_id") @db.UnsignedInt
+  relationId Int          @map("relation_id") @db.UnsignedInt
+  type       ResourceType
+  assignedAt DateTime     @default(now()) @map("assigned_at") @db.DateTime(0)
+
+  content Content @relation(fields: [relationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([tagId, relationId])
+  @@unique([tagId, relationId, type])
+  @@index([relationId])
+  @@map("tag_relations")
+}
+
+model MediaRelation {
+  mediaId    Int          @map("media_id") @db.UnsignedInt
+  relationId Int          @map("relation_id") @db.UnsignedInt
+  type       ResourceType
+  assignedAt DateTime     @default(now()) @map("assigned_at") @db.DateTime(0)
+
+  media   Media   @relation(fields: [mediaId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  content Content @relation(fields: [relationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([mediaId, relationId])
+  @@unique([mediaId, relationId, type])
+  @@index([relationId])
+  @@map("media_relations")
+}
+
+// enum
+enum ResourceType {
+  PRODUCT
+  POST
+}
+
+enum UserRole {
+  ADMIN
+  EDITOR
+  USER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  BANNED
+  PENDING_VERIFICATION
+}
+
+enum BaseStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum CommentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  FLAGGED
+  SPAM
+}
+
+enum CommentPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum ReactionType {
+  LIKE
+  LOVE
+  WOW
+  HAHA
+  SAD
+  ANGRY
+}
+
+enum ContentStatus {
+  DRAFT
+  REVIEW
+  PUBLISHED
+  REJECTED
+  HIDE
+  EXPIRED
+}
+
+enum ContentType {
+  ARTICLE
+  VIDEO
+  IMAGE
+  AUDIO
+  INTERVIEW
+  PAGE
+  REVIEW
+  EBOOK
+}
+
+enum ContentPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+  CRITICAL
+}
