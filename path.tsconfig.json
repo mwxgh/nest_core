@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"],
+      "@configs/*": ["src/configs/*"],
+      "@constants/*": ["src/constants/*"],
+      "@messages/*": ["src/messages/*"],
+      "@utils/*": ["src/utils/*"]
+    }
+  }
+}
