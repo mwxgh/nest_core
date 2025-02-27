@@ -1,5 +1,12 @@
+import { AbstractDto, PageDto, PageMetaDto } from '@/commons/dtos'
 import { UserRole } from '@prisma/client'
+import { compact, map } from 'lodash'
 
+export type ObjectType = Record<string, unknown>
+
+export type Constructor<T, Arguments extends unknown[] = undefined[]> = new (
+  ...arguments_: Arguments
+) => T
 export interface User {
   id: number
   role: UserRole
@@ -9,10 +16,6 @@ export interface User {
 export interface RequestWithUser extends Request {
   user?: User
 }
-
-export type Constructor<T, Arguments extends unknown[] = undefined[]> = new (
-  ...arguments_: Arguments
-) => T
 
 export interface IFieldOptions {
   each?: boolean
@@ -79,3 +82,33 @@ export abstract class AbstractEntityWithCU<
   createdBy?: number
   updatedBy?: number
 }
+
+declare global {
+  interface Array<T> {
+    toDtos<Dto extends AbstractDto>(this: T[], options?: unknown): Dto[]
+
+    toPageDto<Dto extends AbstractDto>(
+      this: T[],
+      pageMetaDto: PageMetaDto,
+      options?: unknown,
+    ): PageDto<Dto>
+  }
+}
+
+Array.prototype.toDtos = <
+  Entity extends AbstractEntityWithCU<Dto>,
+  Dto extends AbstractDto,
+>(
+  options?: unknown,
+): Dto[] =>
+  compact(
+    map<Entity, Dto>(this as unknown as Entity[], (item) =>
+      item.toDto(options as never),
+    ),
+  )
+
+Array.prototype.toPageDto = (pageMetaDto: PageMetaDto, options?: unknown) =>
+  new PageDto(
+    (this as unknown as AbstractEntityWithCU<AbstractDto>[]).toDtos(options),
+    pageMetaDto,
+  )

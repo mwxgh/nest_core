@@ -1,6 +1,6 @@
 import { applyDecorators } from '@nestjs/common'
 import { Transform, TransformFnParams, Type } from 'class-transformer'
-import moment from 'moment'
+import { parse, format } from 'date-fns'
 import { RegexConstant } from '@/constants'
 import {
   IsNotEmpty,
@@ -37,9 +37,14 @@ export const TimeField = (
 
   decorators.push(
     Transform(({ value }: TransformFnParams): string | undefined => {
-      return value && typeof value === 'string'
-        ? moment(`2000-01-01 ${value}`).format('HH:mm:ss')
-        : undefined
+      if (
+        typeof value === 'string' &&
+        value.match(RegexConstant.timeFormatHHmm)
+      ) {
+        const parsedTime = parse(value, 'HH:mm', new Date())
+        return format(parsedTime, 'HH:mm:ss')
+      }
+      return undefined
     }),
   )
 
