@@ -1,7 +1,13 @@
-import type { INestApplication } from '@nestjs/common'
+import { Logger, type INestApplication } from '@nestjs/common'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import config from '@/configs/config'
+import { AppConstant } from '@/constants'
 
 export const setupSwagger = (app: INestApplication): void => {
+  const { port, env } = config().app
+
+  if (![AppConstant.dev].includes(env)) return
+
   const documentBuilder = new DocumentBuilder()
     .setTitle('API')
     .setDescription(
@@ -18,5 +24,5 @@ export const setupSwagger = (app: INestApplication): void => {
     },
   })
 
-  console.info(`Documentation: http://localhost:3000/swagger`)
+  Logger.log(`🚀 Swagger is running on: http://localhost:${port}/swagger`)
 }

@@ -6,6 +6,6 @@ export const ExportConstant = {
   formatFileName: '%date_%fileName',
   UTF8: 'UTF-8',
   downloadFolder: 'downloads',
-  timeFormat: 'HH:mm',
+  timeWithColonFormat: 'HH:mm',
   dateWithHyphenFormat: 'YYYY-MM-DD',
 }

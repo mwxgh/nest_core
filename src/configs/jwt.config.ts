@@ -11,6 +11,6 @@ export const jwtStrategyConfig = {
 
 export const refreshJwtStrategyConfig = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: refreshSecret,
   ignoreExpiration: false,
+  secretOrKey: refreshSecret,
 }

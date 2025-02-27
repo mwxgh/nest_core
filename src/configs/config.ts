@@ -1,15 +1,10 @@
 export default () => ({
   app: {
-    port: process.env.APP_PORT ?? 3000,
-    name: process.env.APP_NAME,
-    env: process.env.APP_ENV ?? 'development',
-    url: process.env.APP_URL,
-    timeout: process.env.APP_TIMEOUT ?? 30000,
-  },
-
-  fileUpload: {
-    destination: process.env.FILE_UPLOAD_DESTINATION ?? 'uploads',
-    maxSize: parseInt(String(process.env.FILE_UPLOAD_MAX_SIZE), 10) ?? 52428800,
+    env: process.env.NODE_ENV ?? 'development',
+    port: process.env.API_PORT ?? 3000,
+    name: process.env.API_NAME,
+    url: process.env.API_URL,
+    timeout: process.env.API_TIMEOUT ?? 30000,
   },
 
   jwt: {
@@ -18,17 +13,10 @@ export default () => ({
     ttl: process.env.JWT_TTL,
     refreshSecret: process.env.JWT_REFRESH_SECRET,
     refreshTtl: process.env.JWT_REFRESH_TTL,
-    algorithm: process.env.JWT_ALGORITHM ?? 'HS256',
   },
 
   database: {
-    driver: process.env.DATABASE_DRIVER as 'mysql' | 'mongodb',
-    host: process.env.DATABASE_HOST,
-    port: parseInt(String(process.env.DATABASE_PORT), 10) ?? 3306,
-    username: process.env.DATABASE_USER,
-    password: process.env.DATABASE_PW,
-    db: process.env.DATABASE_DB,
-    logger: process.env.DATABASE_LOGGER,
+    url: process.env.DATABASE_URL,
   },
 
   redis: {

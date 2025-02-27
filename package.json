@@ -7,12 +7,12 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "format": "prettier --write --check \"src/**/*.ts\"",
+    "format": "prettier \"src/**/*.ts\" --write --check",
     "start": "nest start",
     "dev": "nest start --watch",
     "debug": "nest start --debug --watch",
     "prod": "node dist/main",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "lint": "eslint \"src/**/*.ts\" --fix",
     "prepare": "husky"
   },
   "lint-staged": {
@@ -26,8 +26,12 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^11.0.10",
     "@nestjs/swagger": "^11.0.5",
+    "@nestjs/terminus": "^11.0.0",
     "@prisma/client": "^6.4.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
     "dotenv": "^16.4.7",
+    "moment-timezone": "^0.5.47",
     "passport-jwt": "^4.0.1",
     "prisma": "^6.4.1",
     "reflect-metadata": "^0.2.2",
@@ -36,16 +40,17 @@
   "devDependencies": {
     "@commitlint/cli": "^19.7.1",
     "@commitlint/config-conventional": "^19.7.1",
-    "@nestjs/cli": "^11.0.4",
+    "@nestjs/cli": "^11.0.5",
     "@nestjs/schematics": "^11.0.1",
     "@nestjs/testing": "^11.0.10",
     "@types/express": "^5.0.0",
+    "@types/lodash": "^4.17.15",
     "@types/node": "^22.13.5",
     "@types/passport-jwt": "^4.0.1",
-    "@typescript-eslint/eslint-plugin": "^8.24.1",
-    "@typescript-eslint/parser": "^8.24.1",
+    "@typescript-eslint/eslint-plugin": "^8.25.0",
+    "@typescript-eslint/parser": "^8.25.0",
     "eslint": "^9.21.0",
-    "eslint-config-prettier": "^10.0.1",
+    "eslint-config-prettier": "^10.0.2",
     "eslint-plugin-prettier": "^5.2.3",
     "husky": "^9.1.7",
     "lint-staged": "^15.4.3",
@@ -55,6 +60,6 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.3",
-    "typescript-eslint": "^8.24.1"
+    "typescript-eslint": "^8.25.0"
   }
 }

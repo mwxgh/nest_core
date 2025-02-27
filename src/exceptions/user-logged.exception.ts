@@ -1,8 +1,8 @@
 import { UnauthorizedException } from '@nestjs/common'
-import { ValidationCustomLogicMessage } from '@/messages'
+import { ValidationLogicMessage } from '@/messages'
 
 export class UserLoggedException extends UnauthorizedException {
   constructor(error?: string) {
-    super(ValidationCustomLogicMessage.forceLogoutWhenLoginLater, error)
+    super(ValidationLogicMessage.forceLogoutWhenLoginLater, error)
   }
 }
