@@ -46,4 +46,5 @@ export const ValidationLogicMessage = {
   invalidFileType: 'Invalid file format selected',
   cannotCreateOrUpdate:
     '$field could not be completed because it was updated by another user',
+  isConflict: "The $field you've entered is already in use",
 }
