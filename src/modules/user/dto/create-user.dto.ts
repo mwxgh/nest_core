@@ -1,5 +1,5 @@
 import { UserRole, UserStatus } from '@prisma/client'
-import { EnumField, EnumFieldOptional, StringField } from '@/commons/decorators'
+import { EnumField, EnumFieldOptional, StringField } from '@commons/decorators'
 import { EntityConstant } from '@/constants'
 
 export class CreateUserDto {

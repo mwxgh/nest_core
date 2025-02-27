@@ -1,4 +1,4 @@
-import { AbstractDto, PageDto, PageMetaDto } from '@/commons/dtos'
+import { AbstractDto, PageDto, PageMetaDto } from '@commons/dtos'
 import { UserRole } from '@prisma/client'
 import { compact, map } from 'lodash'
 

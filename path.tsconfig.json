@@ -3,9 +3,12 @@
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"],
+      "@commons/*": ["src/commons/*"],
       "@configs/*": ["src/configs/*"],
       "@constants/*": ["src/constants/*"],
+      "@exceptions/*": ["src/exceptions/*"],
       "@messages/*": ["src/messages/*"],
+      "@shared/*": ["src/shared/*"],
       "@utils/*": ["src/utils/*"]
     }
   }
