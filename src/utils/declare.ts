@@ -1,8 +1,31 @@
 import { AbstractDto, PageDto, PageMetaDto } from '@commons/dtos'
 import { UserRole } from '@prisma/client'
 import { compact, map } from 'lodash'
+import type { Logger } from 'winston'
+import { AsyncLocalStorage } from 'async_hooks'
+import { AsyncRequestContext } from '@/shared/async-context-request'
 
 export type ObjectType = Record<string, unknown>
+
+export interface StoreContextType {
+  contextId?: string
+  ip?: string
+  endpoint?: string
+  device?: string
+  domain?: string
+  userId?: number
+  method?: string
+}
+
+export interface ExceptionFilterType {
+  asyncRequestContext: AsyncRequestContext
+  logger: Logger
+}
+
+export interface AsyncContextModuleOptions {
+  isGlobal?: boolean
+  asyncLocalStorageInstance?: AsyncLocalStorage<StoreContextType>
+}
 
 export type Constructor<T, Arguments extends unknown[] = undefined[]> = new (
   ...arguments_: Arguments
@@ -15,6 +38,15 @@ export interface User {
 
 export interface RequestWithUser extends Request {
   user?: User
+}
+
+export type RequestWithContextType = RequestWithUser & {
+  raw?: {
+    url?: string
+  }
+  ip?: string
+  originalUrl?: string
+  hostname?: string
 }
 
 export interface IFieldOptions {

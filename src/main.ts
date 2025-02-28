@@ -8,11 +8,14 @@ import {
   ValidationPipe,
 } from '@nestjs/common'
 import config from './configs/config'
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston'
 
 const { port } = config().app
 
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule)
+
+  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER))
 
   // Set global prefix for app.
   app.setGlobalPrefix('v1', {

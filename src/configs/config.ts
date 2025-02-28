@@ -5,6 +5,7 @@ export default () => ({
     name: process.env.API_NAME,
     url: process.env.API_URL,
     timeout: process.env.API_TIMEOUT ?? 30000,
+    timezone: process.env.TZ,
   },
 
   jwt: {

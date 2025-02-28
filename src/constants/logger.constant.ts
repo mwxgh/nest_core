@@ -9,9 +9,11 @@ export const LoggerConstant = {
   debugLevel: 'debug',
   queryPrefix: 'Query: ',
   parameterPrefix: ' -- PARAMETERS: ',
-  queryLogLevelsDev: ['log', 'warn', 'query', 'schema', 'migration'],
   queryLogLevels: ['error', 'migration'],
+  queryLogLevelsDev: ['log', 'warn', 'query', 'schema', 'migration'],
   queryLogLevelsTest: ['log', 'warn'],
   backgroundJobContext: 'BackgroundJob',
   queryFailed: 'Query failed',
+  uncaughtException: 'UncaughtException',
+  unhandledRejection: 'UnhandledRejection',
 }

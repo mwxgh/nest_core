@@ -1,6 +1,9 @@
 import { AppConstant } from '@/constants'
 import { format } from 'date-fns'
-import { ObjectType } from './declare'
+import { ObjectType, RequestWithContextType, StoreContextType } from './declare'
+import { AsyncRequestContext } from '@/shared/async-context-request'
+import { isEmpty } from 'lodash'
+import { v4 } from 'uuid'
 
 export const getVariableName = <TResult>(getVar: () => TResult): string => {
   const m = /\(\)=>(.*)/.exec(
@@ -190,4 +193,30 @@ export const buildLogParameters = (params: ObjectType): ObjectType => {
   })
 
   return params
+}
+
+export const createStore = (
+  req: RequestWithContextType,
+  asyncRequestContext: AsyncRequestContext,
+): StoreContextType => {
+  let store = asyncRequestContext.getRequestIdStore()
+
+  if (isEmpty(store)) {
+    const requestId = v4()
+
+    const logContext: StoreContextType = {
+      contextId: requestId,
+      ip: (req.headers['x-forwarded-for'] as string) ?? req.ip ?? '',
+      endpoint: req.raw?.url ?? req.originalUrl ?? '',
+      device: (req.headers['user-agent'] as string) ?? '',
+      domain: req.hostname ?? '',
+      userId: typeof req.user?.id === 'number' ? req.user.id : undefined,
+      method: req.method ?? '',
+    }
+
+    asyncRequestContext.set(logContext)
+    store = logContext
+  }
+
+  return store
 }
