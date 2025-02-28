@@ -5,15 +5,21 @@ import {
   HealthCheckResult,
   HealthCheckService,
   MemoryHealthIndicator,
+  PrismaHealthIndicator,
 } from '@nestjs/terminus'
+import { PrismaClient } from '@prisma/client'
 
 @ApiTags('Health check')
 @Controller('health')
 export class HealthController {
+  private prisma: PrismaClient
   constructor(
     private healthCheckService: HealthCheckService,
     private memoryHealthIndicator: MemoryHealthIndicator,
-  ) {}
+    private prismaHealthIndicator: PrismaHealthIndicator,
+  ) {
+    this.prisma = new PrismaClient()
+  }
 
   @Get()
   @HealthCheck()
@@ -23,6 +29,10 @@ export class HealthController {
         this.memoryHealthIndicator.checkHeap('memory_heap', 300 * 1024 * 1024),
       () =>
         this.memoryHealthIndicator.checkRSS('memory_rss', 300 * 1024 * 1024),
+      () =>
+        this.prismaHealthIndicator.pingCheck('database', this.prisma, {
+          timeout: 1000,
+        }),
     ])
   }
 }

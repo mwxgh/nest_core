@@ -12,7 +12,7 @@ import {
   MinLength,
 } from './validator.decorator'
 import { ApiPropertyCommonOptions } from '@nestjs/swagger/dist/decorators/api-property.decorator'
-import { IStringFieldOptions } from '@/utils/declare'
+import { IStringFieldOptions } from '@/utils'
 
 export const StringField = (
   options: ApiPropertyCommonOptions & IStringFieldOptions = {},

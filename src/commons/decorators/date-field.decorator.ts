@@ -9,7 +9,7 @@ import {
   IsUndefinable,
 } from './validator.decorator'
 import { ApiPropertyCommonOptions } from '@nestjs/swagger/dist/decorators/api-property.decorator'
-import { IFieldOptions } from '@/utils/declare'
+import { IFieldOptions } from '@/utils'
 
 export const DateField = (
   options: ApiPropertyCommonOptions & IFieldOptions = {},

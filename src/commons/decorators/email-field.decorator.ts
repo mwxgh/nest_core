@@ -3,7 +3,7 @@ import { applyDecorators } from '@nestjs/common'
 import { IsEmail } from 'class-validator'
 import { StringField } from './string-field.decorator'
 import { IsUndefinable } from './validator.decorator'
-import { IStringFieldOptions } from '@/utils/declare'
+import { IStringFieldOptions } from '@/utils'
 
 export const EmailField = (
   options: ApiPropertyCommonOptions & IStringFieldOptions = {},

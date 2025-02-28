@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
-import { setupSwagger } from './utils/setup.swagger'
+import { setupSwagger } from './utils'
 import {
   HttpStatus,
   RequestMethod,

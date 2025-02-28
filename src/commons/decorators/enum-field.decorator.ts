@@ -4,7 +4,7 @@ import { IsEnum, IsNotEmpty, IsOptional } from 'class-validator'
 import { IsNullable, IsUndefinable } from './validator.decorator'
 import { ToArray } from './transform.decorator'
 import { ApiEnumProperty } from './property.decorator'
-import { IFieldOptions } from '@/utils/declare'
+import { IFieldOptions } from '@/utils'
 
 type IEnumFieldOptions = IFieldOptions
 

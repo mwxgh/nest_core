@@ -12,7 +12,7 @@ import {
   ApiProperty,
   ApiPropertyCommonOptions,
 } from '@nestjs/swagger/dist/decorators/api-property.decorator'
-import { IFieldOptions } from '@/utils/declare'
+import { IFieldOptions } from '@/utils'
 
 export type Time = `${number}:${number}`
 

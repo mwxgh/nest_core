@@ -15,7 +15,7 @@ import {
   Max,
   Min,
 } from './validator.decorator'
-import { IArrayFieldOptions, INumberFieldOptions } from '@/utils/declare'
+import { IArrayFieldOptions, INumberFieldOptions } from '@/utils'
 
 export const NumberField = (
   options: ApiPropertyCommonOptions &

@@ -3,7 +3,7 @@ import { applyDecorators } from '@nestjs/common'
 import { IsNotEmpty } from 'class-validator'
 import { StringField } from './string-field.decorator'
 import { IsNullable, IsUndefinable } from './validator.decorator'
-import { IStringFieldOptions } from '@/utils/declare'
+import { IStringFieldOptions } from '@/utils'
 
 export const PasswordField = (
   options: ApiPropertyCommonOptions & IStringFieldOptions = {},

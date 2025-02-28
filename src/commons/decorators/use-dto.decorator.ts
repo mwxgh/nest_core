@@ -1,4 +1,4 @@
-import { AbstractEntity, Constructor } from '@/utils/declare'
+import { AbstractEntity, Constructor } from '@/utils'
 import { AbstractDto } from '../dtos'
 
 // interface DtoClassConstructor {

@@ -3,7 +3,7 @@ import { IsUrl } from 'class-validator'
 import { IsNotEmpty, IsNullable, IsUndefinable } from './validator.decorator'
 import { ApiPropertyCommonOptions } from '@nestjs/swagger/dist/decorators/api-property.decorator'
 import { StringField } from './string-field.decorator'
-import { IStringFieldOptions } from '@/utils/declare'
+import { IStringFieldOptions } from '@/utils'
 
 export const URLField = (
   options: ApiPropertyCommonOptions & IStringFieldOptions = {},

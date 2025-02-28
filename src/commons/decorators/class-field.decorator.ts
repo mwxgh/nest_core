@@ -11,7 +11,7 @@ import {
   IsUndefinable,
 } from './validator.decorator'
 import { ApiPropertyCommonOptions } from '@nestjs/swagger/dist/decorators/api-property.decorator'
-import { IArrayFieldOptions } from '@/utils/declare'
+import { IArrayFieldOptions } from '@/utils'
 import { ArrayUnique } from './validator.custom.decorator'
 
 export const ClassField = (
