@@ -7,7 +7,6 @@ import {
   AsyncRequestContextModule,
 } from '../async-context-request'
 import { loggerFormat } from './logger.format'
-import { QueryLogger } from './query.logger'
 import config from '@/configs/config'
 
 const { env, timezone } = config().app
@@ -36,7 +35,5 @@ const formatted = () => {
       inject: [AsyncRequestContext],
     }),
   ],
-  providers: [QueryLogger],
-  exports: [QueryLogger],
 })
 export class LoggerModule {}

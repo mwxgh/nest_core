@@ -1,4 +1,4 @@
-import { green, red, white, yellow, cyan } from 'cli-color'
+import { green, red, white, yellow, cyan, magenta } from 'cli-color'
 import { format } from 'winston'
 import { AppConstant, LoggerConstant } from '@/constants'
 import { AsyncRequestContext } from '../async-context-request'
@@ -7,12 +7,10 @@ import { StoreContextType } from '@/utils'
 
 export const loggerFormat = (asyncContext: AsyncRequestContext) =>
   format.printf(({ context, level, timestamp, message }): string => {
-    // Get context information
     const ctx = (context ??
       asyncContext.getRequestIdStore() ??
       {}) as StoreContextType
 
-    // Extract values with type assertions
     const contextId = String(ctx.contextId ?? 'N/A')
     const endpoint = String(ctx.endpoint ?? 'N/A')
     const ip = String(ctx.ip ?? 'N/A')
@@ -21,7 +19,6 @@ export const loggerFormat = (asyncContext: AsyncRequestContext) =>
     const userId = String(ctx.userId ?? 'N/A')
     const method = String(ctx.method ?? 'N/A')
 
-    // Define color functions based on log level
     const colorForLevel =
       {
         [LoggerConstant.infoLevel]: green,
@@ -31,13 +28,12 @@ export const loggerFormat = (asyncContext: AsyncRequestContext) =>
         [LoggerConstant.debugLevel]: yellow,
       }[level] || white
 
-    const { env } = config().app
+    const { env, timezone } = config().app
     const applyColor =
       env === AppConstant.test || env === AppConstant.dev
         ? (text: string) => colorForLevel(text)
         : (text: string) => text
 
-    // Format the level and context
     const formatWithColor = (text: string) => applyColor(`[${text}]`)
     const formattedLevel = formatWithColor(level.toUpperCase())
     const formattedContext = {
@@ -50,14 +46,12 @@ export const loggerFormat = (asyncContext: AsyncRequestContext) =>
       method: formatWithColor(method),
     }
 
-    // Prisma does not have `highlightSql`, so we manually color SQL queries
     const highlightSql = (sql: string) =>
       sql.replace(
         /(SELECT|FROM|WHERE|INSERT|UPDATE|DELETE|JOIN|ON|INTO|VALUES)/gi,
         (match) => cyan.bold(match),
       )
 
-    // Highlight SQL queries manually
     const formattedMessage =
       typeof message === 'string' &&
       level === LoggerConstant.infoLevel &&
@@ -65,9 +59,10 @@ export const loggerFormat = (asyncContext: AsyncRequestContext) =>
         ? highlightSql(message)
         : String(message)
 
-    const safeTimestamp = new Date(
-      timestamp as string | number | Date,
-    ).toISOString()
+    const time = new Date(timestamp as string | number | Date).toLocaleString(
+      'vi-VN',
+      { timeZone: timezone },
+    )
 
-    return `[${safeTimestamp}] ${formattedContext.contextId} ${formattedLevel} ${formattedContext.domain} ${formattedContext.userId} ${formattedContext.ip} ${formattedContext.method} ${formattedContext.endpoint} ${formattedContext.device} - ${formattedMessage}`
+    return `${magenta('[Winston]')} - ${time} - ${formattedContext.contextId} ${formattedLevel} ${formattedContext.domain} ${formattedContext.userId} ${formattedContext.ip} ${formattedContext.method} ${formattedContext.endpoint} ${formattedContext.device} - ${formattedMessage}`
   })
