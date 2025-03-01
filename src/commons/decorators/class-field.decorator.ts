@@ -12,7 +12,7 @@ import {
 } from './validator.decorator'
 import { ApiPropertyCommonOptions } from '@nestjs/swagger/dist/decorators/api-property.decorator'
 import { IArrayFieldOptions } from '@/utils'
-import { ArrayUnique } from './validator.custom.decorator'
+import { IsArrayUnique } from './validator.custom.decorator'
 
 export const ClassField = (
   options: ApiPropertyCommonOptions & IArrayFieldOptions = {},
@@ -21,7 +21,7 @@ export const ClassField = (
     ValidateNested({ each: options.each }),
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     Type(options.type as any),
-    options.arrayUnique ? ArrayUnique(options.arrayUnique) : undefined,
+    options.isArrayUnique ? IsArrayUnique(options.isArrayUnique) : undefined,
     options.isArray ? IsArray() : undefined,
     options.minSize ? ArrayMinSize(options.minSize) : undefined,
     options.maxSize ? ArrayMaxSize(options.maxSize) : undefined,

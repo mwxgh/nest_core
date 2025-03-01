@@ -33,7 +33,7 @@ export const ValidationLogicMessage = {
   isLessThan: '$field must be less than $1',
   isGreaterThan: '$field must be greater than $1',
   timeEarlierThanField: 'Please enter a date earlier than $field',
-  arrayUnique: '$field must contain element unique',
+  isArrayUnique: '$field must contain element unique',
   isInvalidDataWithStatus:
     'There are some invalid data with user retirement status',
   isLaterWithDateOrTimeOnly: 'Cannot enter a time before the start time',

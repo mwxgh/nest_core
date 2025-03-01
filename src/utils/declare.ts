@@ -68,7 +68,7 @@ export type IStringFieldOptions = {
 export type IArrayFieldOptions = {
   minSize?: number
   maxSize?: number
-  arrayUnique?: string
+  isArrayUnique?: string
 } & IFieldOptions
 
 export type INumberFieldOptions = {

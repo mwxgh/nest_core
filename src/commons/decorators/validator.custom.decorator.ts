@@ -1,10 +1,14 @@
-import { RegexConstant } from '@/constants'
+import { AppConstant, RegexConstant } from '@/constants'
 import { ValidationLogicMessage, ValidationTypeMessage } from '@/messages'
+import { ObjectType } from '@/utils'
 import {
   arrayUnique,
   registerDecorator,
   ValidationOptions,
+  ValidationArguments,
 } from 'class-validator'
+import { format } from 'date-fns'
+import { toZonedTime } from 'date-fns-tz'
 
 export const IsValidContentType =
   (contentTypes: string[], errorMessage: string): PropertyDecorator =>
@@ -31,7 +35,7 @@ export const IsPassword = (
   return (object, propertyName: string) => {
     registerDecorator({
       propertyName,
-      name: 'isPassword',
+      name: 'IsPassword',
       target: object.constructor,
       constraints: [],
       options: {
@@ -47,20 +51,19 @@ export const IsPassword = (
   }
 }
 
-export const ArrayUnique = (property?: string): PropertyDecorator => {
+export const IsArrayUnique = (property?: string): PropertyDecorator => {
   return (object, propertyName: string) => {
     registerDecorator({
       propertyName,
-      name: 'arrayUnique',
+      name: 'IsArrayUnique',
       target: object.constructor,
       constraints: [],
       options: {
-        message: ValidationLogicMessage.arrayUnique,
+        message: ValidationLogicMessage.isArrayUnique,
       },
       validator: {
         validate(value: unknown): boolean {
-          if (!Array.isArray(value)) return false // Ensure value is an array
-
+          if (!Array.isArray(value)) return false
           const arrValue = property
             ? value
                 .filter(
@@ -80,266 +83,317 @@ export const ArrayUnique = (property?: string): PropertyDecorator => {
   }
 }
 
-// export const IsLessOrEqual =
-//   (argument: any, validationOptions?: ValidationOptions): PropertyDecorator =>
-//   (object, propertyName: string) => {
-//     registerDecorator({
-//       propertyName,
-//       name: 'LessOrEqual',
-//       target: object.constructor,
-//       constraints: [],
-//       options: {
-//         ...validationOptions,
-//         message: ValidationLogicMessage.isLessOrEqual.replace(
-//           '$argument',
-//           'something to less or equal',
-//         ),
-//       },
-//       validator: {
-//         validate(value: any, args: any) {
-//           const field2 = args.object[argument]
+export const IsLessOrEqual =
+  (
+    argument: string,
+    validationOptions?: ValidationOptions,
+  ): PropertyDecorator =>
+  (object, propertyName: string) => {
+    registerDecorator({
+      propertyName,
+      name: 'IsLessOrEqual',
+      target: object.constructor,
+      constraints: [],
+      options: {
+        ...validationOptions,
+        message: ValidationLogicMessage.isLessOrEqual.replace(
+          '$argument',
+          'something to less or equal',
+        ),
+      },
+      validator: {
+        validate(value: unknown, args: ValidationArguments) {
+          const targetObject = args.object as ObjectType
 
-//           return value <= field2
-//         },
-//       },
-//     })
-//   }
+          if (!(argument in targetObject)) return false
 
-// export const IsGreaterOrEqual =
-//   (
-//     targetOptions: {
-//       targetFieldName: any
-//       skipIfNull?: boolean
-//       skipIfTargetValueNull?: boolean
-//     },
-//     validationOptions?: ValidationOptions,
-//   ): PropertyDecorator =>
-//   (object, propertyName: string) => {
-//     registerDecorator({
-//       propertyName,
-//       name: 'GreaterOrEqual',
-//       target: object.constructor,
-//       constraints: [],
-//       options: {
-//         ...validationOptions,
-//         message: ValidationLogicMessage.isGreaterOrEqual,
-//       },
-//       validator: {
-//         validate(value: any, args: any) {
-//           const { targetFieldName, skipIfNull, skipIfTargetValueNull } =
-//             targetOptions
-//           const targetValue = args.object[targetFieldName]
+          const field2 = targetObject[argument] as number | undefined
 
-//           if (
-//             (skipIfNull && value == undefined) ||
-//             (skipIfTargetValueNull && targetValue == undefined)
-//           ) {
-//             return true
-//           }
+          return (
+            typeof value === 'number' &&
+            typeof field2 === 'number' &&
+            value <= field2
+          )
+        },
+      },
+    })
+  }
 
-//           return value >= targetValue
-//         },
-//       },
-//     })
-//   }
+export const IsGreaterOrEqual =
+  (
+    targetOptions: {
+      targetFieldName: string
+      skipIfNull?: boolean
+      skipIfTargetValueNull?: boolean
+    },
+    validationOptions?: ValidationOptions,
+  ): PropertyDecorator =>
+  (object, propertyName: string) => {
+    registerDecorator({
+      propertyName,
+      name: 'IsGreaterOrEqual',
+      target: object.constructor,
+      constraints: [],
+      options: {
+        ...validationOptions,
+        message: ValidationLogicMessage.isGreaterOrEqual,
+      },
+      validator: {
+        validate(value: unknown, args: ValidationArguments) {
+          const { targetFieldName, skipIfNull, skipIfTargetValueNull } =
+            targetOptions
 
-// export const IsLaterWithDateOrTimeOnly =
-//   (
-//     startTimeField: any,
-//     skipIfNull?: boolean,
-//     validationOptions?: ValidationOptions,
-//   ): PropertyDecorator =>
-//   (object, propertyName: string) => {
-//     registerDecorator({
-//       propertyName,
-//       name: 'Later',
-//       target: object.constructor,
-//       constraints: [],
-//       options: {
-//         ...validationOptions,
-//         message: ValidationLogicMessage.isLaterWithDateOrTimeOnly,
-//       },
-//       validator: {
-//         validate(value: any, args: any) {
-//           const startTimeValue = args.object[startTimeField]
-//           if (skipIfNull && value == undefined) {
-//             return true
-//           }
+          const targetObject = args.object as ObjectType
+          if (!(targetFieldName in targetObject)) return false
 
-//           return value >= startTimeValue
-//         },
-//       },
-//     })
-//   }
+          const targetValue = targetObject[targetFieldName] as
+            | number
+            | undefined
 
-// export const IsEarlierWithDateOrTimeOnly = (
-//   targetOptions: {
-//     targetField: any
-//     targetFieldName?: any
-//     skipIfTargetValueNull?: boolean
-//     skipIfNull?: boolean
-//   },
-//   validationOptions?: ValidationOptions,
-// ): PropertyDecorator => {
-//   const { targetField, targetFieldName, skipIfNull, skipIfTargetValueNull } =
-//     targetOptions
-//   return (object, propertyName: string) => {
-//     registerDecorator({
-//       propertyName,
-//       name: 'Earlier',
-//       target: object.constructor,
-//       constraints: [],
-//       options: {
-//         ...validationOptions,
-//         message: ValidationLogicMessage.timeEarlierThanField.replace(
-//           '$field',
-//           targetFieldName ?? targetField,
-//         ),
-//       },
-//       validator: {
-//         validate(value: any, args: any) {
-//           const targetValue = args.object[targetField]
-//           if (
-//             (skipIfNull && value == undefined) ||
-//             (skipIfTargetValueNull && targetValue == undefined)
-//           ) {
-//             return true
-//           }
+          if (
+            (skipIfNull && value == undefined) ||
+            (skipIfTargetValueNull && targetValue == undefined)
+          ) {
+            return true
+          }
 
-//           return value < targetValue
-//         },
-//       },
-//     })
-//   }
-// }
+          return (
+            typeof value === 'number' &&
+            typeof targetValue === 'number' &&
+            value >= targetValue
+          )
+        },
+      },
+    })
+  }
 
-// export const IsLaterWithDateTimeConcat = (
-//   startDateField: any,
-//   startTimeField: any,
-//   endDateField: any,
-//   endTimeField: any,
-//   validationOptions?: ValidationOptions,
-// ): PropertyDecorator => {
-//   return (object, propertyName: string) => {
-//     registerDecorator({
-//       propertyName,
-//       name: 'LaterWithDateConcat',
-//       target: object.constructor,
-//       constraints: [],
-//       options: {
-//         ...validationOptions,
-//         message: ValidationLogicMessage.isLaterWithDateOrTimeOnly,
-//       },
-//       validator: {
-//         validate(_value: any, args: any) {
-//           const startDateValue = args.object[startDateField]
-//           const endDateValue = args.object[endDateField]
+export const IsLaterWithDateOrTimeOnly =
+  (
+    startTimeField: string,
+    skipIfNull?: boolean,
+    validationOptions?: ValidationOptions,
+  ): PropertyDecorator =>
+  (object, propertyName: string) => {
+    registerDecorator({
+      propertyName,
+      name: 'IsLaterWithDateOrTimeOnly',
+      target: object.constructor,
+      constraints: [],
+      options: {
+        ...validationOptions,
+        message: ValidationLogicMessage.isLaterWithDateOrTimeOnly,
+      },
+      validator: {
+        validate(value: unknown, args: ValidationArguments) {
+          const targetObject = args.object as ObjectType
 
-//           if (startDateValue < endDateValue) {
-//             return true
-//           }
-//           if (startDateValue > endDateValue) {
-//             return false
-//           }
+          if (!(startTimeField in targetObject)) return false
 
-//           return args.object[startTimeField] <= args.object[endTimeField]
-//         },
-//       },
-//     })
-//   }
-// }
+          const startTimeValue = targetObject[startTimeField] as
+            | number
+            | undefined
 
-// export const IsConstraintField = (
-//   fieldConstraint: string,
-//   validationOptions?: ValidationOptions,
-// ): PropertyDecorator => {
-//   return (object, propertyName: string) => {
-//     registerDecorator({
-//       propertyName,
-//       name: 'ConstraintField',
-//       target: object.constructor,
-//       constraints: [fieldConstraint],
-//       options: {
-//         ...validationOptions,
-//         message: ValidationTypeMessage.isNotEmpty.replace(
-//           '$field',
-//           fieldConstraint,
-//         ),
-//       },
-//       validator: {
-//         validate(_value: any, args: any) {
-//           return (
-//             args.object[fieldConstraint] &&
-//             args.object[fieldConstraint] !== null
-//           )
-//         },
-//       },
-//     })
-//   }
-// }
+          if (skipIfNull && !value) return true
 
-// export const IsUntilCurrentTime = (
-//   fieldDateCompare?: string,
-//   validationOptions?: ValidationOptions,
-// ): PropertyDecorator => {
-//   return (object, propertyName: string) => {
-//     registerDecorator({
-//       propertyName,
-//       name: 'UntilCurrentTime',
-//       target: object.constructor,
-//       constraints: [],
-//       options: {
-//         ...validationOptions,
-//         message: ValidationLogicMessage.untilCurrentTime,
-//       },
-//       validator: {
-//         validate(value: any, args: any) {
-//           const momentTimezone = moment().tz(AppConstant.locationMomentTimezone)
-//           const dateString = momentTimezone.format('YYYY-MM-DD')
-//           const timeString = momentTimezone.format('HH:mm')
+          return (
+            typeof value === 'number' &&
+            typeof startTimeValue === 'number' &&
+            value >= startTimeValue
+          )
+        },
+      },
+    })
+  }
 
-//           if (!fieldDateCompare) {
-//             const fieldDateValue = new Date(value).toISOString().split('T')[0]
+export const IsEarlierWithDateOrTimeOnly = (
+  targetOptions: {
+    targetField: string
+    targetFieldName?: string
+    skipIfTargetValueNull?: boolean
+    skipIfNull?: boolean
+  },
+  validationOptions?: ValidationOptions,
+): PropertyDecorator => {
+  const { targetField, targetFieldName, skipIfNull, skipIfTargetValueNull } =
+    targetOptions
+  return (object, propertyName: string) => {
+    registerDecorator({
+      propertyName,
+      name: 'Earlier',
+      target: object.constructor,
+      constraints: [],
+      options: {
+        ...validationOptions,
+        message: ValidationLogicMessage.timeEarlierThanField.replace(
+          '$field',
+          targetFieldName ?? targetField,
+        ),
+      },
+      validator: {
+        validate(value: unknown, args: ValidationArguments) {
+          const targetObject = args.object as ObjectType
+          const targetValue = targetObject[targetField]
+          if (
+            (skipIfNull && value == undefined) ||
+            (skipIfTargetValueNull && targetValue == undefined)
+          ) {
+            return true
+          }
 
-//             return fieldDateValue <= dateString
-//           }
+          return (
+            typeof value === 'number' &&
+            typeof targetValue === 'number' &&
+            value < targetValue
+          )
+        },
+      },
+    })
+  }
+}
 
-//           const fieldDateCompareValue = new Date(args.object[fieldDateCompare])
-//             .toISOString()
-//             .split('T')[0]
+export const IsLaterWithDateTimeConcat = (
+  startDateField: string,
+  startTimeField: string,
+  endDateField: string,
+  endTimeField: string,
+  validationOptions?: ValidationOptions,
+): PropertyDecorator => {
+  return (object, propertyName: string) => {
+    registerDecorator({
+      propertyName,
+      name: 'IsLaterWithDateTimeConcat',
+      target: object.constructor,
+      constraints: [],
+      options: {
+        ...validationOptions,
+        message: ValidationLogicMessage.isLaterWithDateOrTimeOnly,
+      },
+      validator: {
+        validate(_value: unknown, args: ValidationArguments) {
+          const targetObject = args.object as ObjectType
 
-//           if (fieldDateCompareValue < dateString) {
-//             return true
-//           }
+          const startDateValue = new Date(
+            targetObject[startDateField] as string | number | Date,
+          )
+          const endDateValue = new Date(
+            targetObject[endDateField] as string | number | Date,
+          )
 
-//           return value <= timeString
-//         },
-//       },
-//     })
-//   }
-// }
+          if (startDateValue < endDateValue) {
+            return true
+          }
+          if (startDateValue > endDateValue) {
+            return false
+          }
 
-// export const IsEmailMatchWith = (
-//   field: string,
-//   validationOptions?: ValidationOptions,
-// ): PropertyDecorator => {
-//   return (object, propertyName: string) => {
-//     registerDecorator({
-//       propertyName,
-//       name: 'EmailMatchWith',
-//       target: object.constructor,
-//       constraints: [],
-//       options: {
-//         ...validationOptions,
-//         message: ValidationLogicMessage.emailMatchWith,
-//       },
-//       validator: {
-//         validate(value: any, args: any) {
-//           const data = args.object[field]
+          return args.object[startTimeField] <= args.object[endTimeField]
+        },
+      },
+    })
+  }
+}
 
-//           return data && data === value
-//         },
-//       },
-//     })
-//   }
-// }
+export const IsConstraintField = (
+  fieldConstraint: string,
+  validationOptions?: ValidationOptions,
+): PropertyDecorator => {
+  return (object, propertyName: string) => {
+    registerDecorator({
+      propertyName,
+      name: 'IsConstraintField',
+      target: object.constructor,
+      constraints: [fieldConstraint],
+      options: {
+        ...validationOptions,
+        message: ValidationTypeMessage.isNotEmpty.replace(
+          '$field',
+          fieldConstraint,
+        ),
+      },
+      validator: {
+        validate(_value: unknown, args: ValidationArguments) {
+          const targetObject = args.object as ObjectType
+          return (
+            targetObject[fieldConstraint] !== undefined &&
+            targetObject[fieldConstraint] !== null
+          )
+        },
+      },
+    })
+  }
+}
+
+export const IsUntilCurrentTime = (
+  fieldDateCompare?: string,
+  validationOptions?: ValidationOptions,
+): PropertyDecorator => {
+  return (object, propertyName: string) => {
+    registerDecorator({
+      propertyName,
+      name: 'IsUntilCurrentTime',
+      target: object.constructor,
+      constraints: [],
+      options: {
+        ...validationOptions,
+        message: ValidationLogicMessage.untilCurrentTime,
+      },
+      validator: {
+        validate(value: unknown, args: ValidationArguments) {
+          const now = toZonedTime(
+            new Date(),
+            AppConstant.locationMomentTimezone,
+          )
+          const dateString = format(now, 'yyyy-MM-dd')
+          const timeString = format(now, 'HH:mm')
+
+          if (!fieldDateCompare) {
+            const fieldDateValue = new Date(value as string | number | Date)
+              .toISOString()
+              .split('T')[0]
+
+            return fieldDateValue <= dateString
+          }
+
+          const targetObject = args.object as ObjectType
+          const fieldDateCompareValue = new Date(
+            targetObject[fieldDateCompare] as string | number | Date,
+          )
+            .toISOString()
+            .split('T')[0]
+
+          if (fieldDateCompareValue < dateString) {
+            return true
+          }
+
+          return typeof value === 'string' && value <= timeString
+        },
+      },
+    })
+  }
+}
+
+export const IsEmailMatchWith = (
+  field: string,
+  validationOptions?: ValidationOptions,
+): PropertyDecorator => {
+  return (object, propertyName: string) => {
+    registerDecorator({
+      propertyName,
+      name: 'IsEmailMatchWith',
+      target: object.constructor,
+      constraints: [],
+      options: {
+        ...validationOptions,
+        message: ValidationLogicMessage.emailMatchWith,
+      },
+      validator: {
+        validate(value: unknown, args: ValidationArguments) {
+          const targetObject = args.object as ObjectType
+          const data = targetObject[field]
+
+          return typeof data === 'string' && data === value
+        },
+      },
+    })
+  }
+}
