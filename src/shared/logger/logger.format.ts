@@ -3,7 +3,7 @@ import { format } from 'winston'
 import { AppConstant, LoggerConstant } from '@/constants'
 import { AsyncRequestContext } from '../async-context-request'
 import config from '@/configs/config'
-import { StoreContextType } from '@/utils'
+import { ObjectType, StoreContextType } from '@/utils'
 
 export const loggerFormat = (asyncContext: AsyncRequestContext) =>
   format.printf(({ context, level, timestamp, message }): string => {
@@ -11,13 +11,15 @@ export const loggerFormat = (asyncContext: AsyncRequestContext) =>
       asyncContext.getRequestIdStore() ??
       {}) as StoreContextType
 
-    const contextId = String(ctx.contextId ?? 'N/A')
-    const endpoint = String(ctx.endpoint ?? 'N/A')
-    const ip = String(ctx.ip ?? 'N/A')
-    const device = String(ctx.device ?? 'N/A')
-    const domain = String(ctx.domain ?? 'N/A')
-    const userId = String(ctx.userId ?? 'N/A')
-    const method = String(ctx.method ?? 'N/A')
+    const logFields: ObjectType = {
+      contextId: ctx.contextId ?? 'N/A',
+      domain: ctx.domain ?? 'N/A',
+      userId: ctx.userId ? `LoginID: ${ctx.userId}` : 'N/A',
+      ip: ctx.ip ? `IP: ${ctx.ip}` : 'N/A',
+      method: ctx.method ?? 'N/A',
+      endpoint: ctx.endpoint ? `Endpoint: ${ctx.endpoint}` : 'N/A',
+      device: ctx.device ? `Device: ${ctx.device}` : 'N/A',
+    }
 
     const colorForLevel =
       {
@@ -28,27 +30,15 @@ export const loggerFormat = (asyncContext: AsyncRequestContext) =>
         [LoggerConstant.debugLevel]: yellow,
       }[level] || white
 
-    const { env, timezone } = config().app
-    const applyColor =
-      env === AppConstant.test || env === AppConstant.dev
-        ? (text: string) => colorForLevel(text)
-        : (text: string) => text
-
-    const formatWithColor = (text: string) => applyColor(`[${text}]`)
-    const formattedLevel = formatWithColor(level.toUpperCase())
-    const formattedContext = {
-      contextId: formatWithColor(contextId),
-      domain: formatWithColor(domain),
-      userId: formatWithColor(`LoginID: ${userId}`),
-      ip: formatWithColor(`IP: ${ip}`),
-      endpoint: formatWithColor(`Endpoint: ${endpoint}`),
-      device: formatWithColor(`Device: ${device}`),
-      method: formatWithColor(method),
-    }
+    const applyColor = [AppConstant.test, AppConstant.dev].includes(
+      config().app.env,
+    )
+      ? (text: string) => colorForLevel(text)
+      : (text: string) => text
 
     const highlightSql = (sql: string) =>
       sql.replace(
-        /(\bSELECT\b|\bFROM\b|\bWHERE\b|\bINSERT\b|\bUPDATE\b|\bDELETE\b|\bJOIN\b|\bON\b|\bINTO\b|\bVALUES\b|\bLIMIT\b|\bOFFSET\b)/g,
+        /\b(SELECT|FROM|WHERE|INSERT|UPDATE|DELETE|JOIN|ON|INTO|VALUES|LIMIT|OFFSET)\b/g,
         (match) => cyan.bold(match),
       )
 
@@ -59,10 +49,18 @@ export const loggerFormat = (asyncContext: AsyncRequestContext) =>
         ? highlightSql(message)
         : String(message)
 
-    const time = new Date(timestamp as string | number | Date).toLocaleString(
-      'vi-VN',
-      { timeZone: timezone },
-    )
+    const parts = [
+      magenta('[CUSTOM]'),
+      '-',
+      new Date(timestamp as string | number | Date).toISOString(),
+      '-',
+      applyColor(`[${level.toUpperCase()}]`),
+      ...Object.values(logFields)
+        .filter((value) => value !== 'N/A')
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        .map((value) => applyColor(`[${value}]`)),
+      formattedMessage,
+    ]
 
-    return `${magenta('[Winston]')} - ${time} - ${formattedContext.contextId} ${formattedLevel} ${formattedContext.domain} ${formattedContext.userId} ${formattedContext.ip} ${formattedContext.method} ${formattedContext.endpoint} ${formattedContext.device} - ${formattedMessage}`
+    return parts.join(' ')
   })
