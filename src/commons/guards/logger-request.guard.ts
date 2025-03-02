@@ -37,10 +37,10 @@ export class LoggerRequestGuard implements CanActivate {
     const params = { ...body, ...query }
 
     logger.log(
-      `[Params]: ${JSON.stringify(buildLogParameters(params))}`,
+      `PARAMS: ${JSON.stringify(buildLogParameters(params))}`,
       logContext,
     )
-    ;(logger as any) = (asyncRequestContext as any) = null
+    ;(logger as unknown) = (asyncRequestContext as unknown) = null
 
     return true
   }

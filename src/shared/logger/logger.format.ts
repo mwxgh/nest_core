@@ -48,7 +48,7 @@ export const loggerFormat = (asyncContext: AsyncRequestContext) =>
 
     const highlightSql = (sql: string) =>
       sql.replace(
-        /(SELECT|FROM|WHERE|INSERT|UPDATE|DELETE|JOIN|ON|INTO|VALUES)/gi,
+        /(\bSELECT\b|\bFROM\b|\bWHERE\b|\bINSERT\b|\bUPDATE\b|\bDELETE\b|\bJOIN\b|\bON\b|\bINTO\b|\bVALUES\b|\bLIMIT\b|\bOFFSET\b)/g,
         (match) => cyan.bold(match),
       )
 

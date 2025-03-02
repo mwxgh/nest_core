@@ -3,6 +3,8 @@ import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { PrismaService } from '../prisma/prisma.service'
 import { CustomConflictException } from '@/exceptions'
+import { User } from '@prisma/client'
+import { omitTimeStampFields } from '@/utils'
 
 @Injectable()
 export class UserService {
@@ -21,12 +23,19 @@ export class UserService {
     })
   }
 
-  findAll() {
-    return `This action returns all user`
+  async findAll(): Promise<User[]> {
+    return this.prisma.user.findMany({})
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`
+  async findOne(id: number): Promise<Partial<User>> {
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id },
+      omit: {
+        password: true,
+      },
+    })
+
+    return omitTimeStampFields(user)
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

@@ -1,4 +1,4 @@
-import { getVariableName } from '@/utils'
+import { getVariableName } from '@/utils/utils'
 import { ApiProperty } from '@nestjs/swagger'
 import { ApiPropertyCommonOptions } from '@nestjs/swagger/dist/decorators/api-property.decorator'
 import { EnumAllowedTypes } from '@nestjs/swagger/dist/interfaces/schema-object-metadata.interface'

@@ -144,3 +144,19 @@ Array.prototype.toPageDto = (pageMetaDto: PageMetaDto, options?: unknown) =>
     (this as unknown as AbstractEntityWithCU<AbstractDto>[]).toDtos(options),
     pageMetaDto,
   )
+
+export const omitTimeStampFields = <T extends object>(data: T): Partial<T> => {
+  const omittedKeys: (keyof T)[] = [
+    'createdAt' as keyof T,
+    'updatedAt' as keyof T,
+    'deletedAt' as keyof T,
+    'createdBy' as keyof T,
+    'updatedBy' as keyof T,
+  ]
+
+  return Object.fromEntries(
+    Object.entries(data).filter(
+      ([key]) => !omittedKeys.includes(key as keyof T),
+    ),
+  ) as Partial<T>
+}
