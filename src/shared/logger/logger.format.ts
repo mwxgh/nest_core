@@ -4,8 +4,9 @@ import { AppConstant, LoggerConstant } from '@/constants'
 import { AsyncRequestContext } from '../async-context-request'
 import config from '@/configs/config'
 import { ObjectType, StoreContextType } from '@/utils'
+import { Format } from 'logform'
 
-export const loggerFormat = (asyncContext: AsyncRequestContext) =>
+export const loggerFormat = (asyncContext: AsyncRequestContext): Format =>
   format.printf(({ context, level, timestamp, message }): string => {
     const ctx = (context ??
       asyncContext.getRequestIdStore() ??
