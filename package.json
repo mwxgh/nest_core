@@ -34,6 +34,8 @@
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
     "dotenv": "^16.4.7",
+    "libphonenumber-js": "^1.12.6",
+    "logform": "^2.7.0",
     "nest-winston": "^1.10.2",
     "passport-jwt": "^4.0.1",
     "prisma": "^6.5.0",
@@ -66,5 +68,6 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "5.7.3",
     "typescript-eslint": "^8.27.0"
-  }
+  },
+  "packageManager": "pnpm@10.4.0+sha512.6b849d0787d97f8f4e1f03a9b8ff8f038e79e153d6f11ae539ae7c435ff9e796df6a862c991502695c7f9e8fac8aeafc1ac5a8dab47e36148d183832d886dd52"
 }
