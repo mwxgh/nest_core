@@ -29,20 +29,26 @@
 ## Project setup
 
 ```bash
-$ yarn install
+$ pn install
+```
+
+## Schema generate
+
+```bash
+$ pn generate
 ```
 
 ## Compile and run the project
 
 ```bash
 # development
-$ yarn start
+$ pn start
 
 # watch mode
-$ yarn dev
+$ pn dev
 
 # production mode
-$ yarn prod
+$ pn prod
 ```
 
 ## Support
