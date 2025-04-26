@@ -1,10 +1,10 @@
 import { Logger, type INestApplication } from '@nestjs/common'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
-import config from '@/configs/config'
+import { CustomConfig } from '@/configs'
 import { AppConstant } from '@/constants'
 
 export const setupSwagger = (app: INestApplication): void => {
-  const { port, env } = config().app
+  const { port, env } = CustomConfig().app
 
   if (![AppConstant.dev].includes(env)) return
 

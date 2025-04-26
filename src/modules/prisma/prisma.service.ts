@@ -6,12 +6,12 @@ import {
 } from '@nestjs/common'
 import { PrismaClient, Prisma } from '@prisma/client'
 import { OnApplicationShutdown } from '@nestjs/common'
-import config from '@/configs/config'
+import { CustomConfig } from '@/configs'
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston'
 import { Logger } from 'winston'
 import { LoggerConstant } from '@/constants'
 
-const { url } = config().database
+const { url } = CustomConfig().database
 
 @Injectable()
 export class PrismaService

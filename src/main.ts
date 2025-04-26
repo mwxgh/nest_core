@@ -8,7 +8,7 @@ import {
   UnprocessableEntityException,
   ValidationPipe,
 } from '@nestjs/common'
-import config from './configs/config'
+import { CustomConfig } from './configs'
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston'
 import { AsyncRequestContext } from './shared/async-context-request'
 import { ResponseLoggerInterceptor } from './commons/interceptors'
@@ -23,7 +23,7 @@ import {
 } from './commons/filters'
 import { LoggerRequestGuard } from './commons/guards/logger-request.guard'
 
-const { port } = config().app
+const { port } = CustomConfig().app
 
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule)

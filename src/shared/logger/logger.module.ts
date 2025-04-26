@@ -7,9 +7,9 @@ import {
   AsyncRequestContextModule,
 } from '../async-context-request'
 import { loggerFormat } from './logger.format'
-import config from '@/configs/config'
+import { CustomConfig } from '@/configs'
 
-const { env, timezone } = config().app
+const { env, timezone } = CustomConfig().app
 
 const formatted = () => {
   return new Date().toLocaleString('en-US', {

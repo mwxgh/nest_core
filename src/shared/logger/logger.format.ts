@@ -2,7 +2,7 @@ import { green, red, white, yellow, cyan, magenta } from 'cli-color'
 import { format } from 'winston'
 import { AppConstant, LoggerConstant } from '@/constants'
 import { AsyncRequestContext } from '../async-context-request'
-import config from '@/configs/config'
+import { CustomConfig } from '@/configs'
 import { ObjectType, StoreContextType } from '@/utils'
 import { Format } from 'logform'
 
@@ -32,7 +32,7 @@ export const loggerFormat = (asyncContext: AsyncRequestContext): Format =>
       }[level] || white
 
     const applyColor = [AppConstant.test, AppConstant.dev].includes(
-      config().app.env,
+      CustomConfig().app.env,
     )
       ? (text: string) => colorForLevel(text)
       : (text: string) => text

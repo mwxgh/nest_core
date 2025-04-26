@@ -1,7 +1,7 @@
 import { ExtractJwt } from 'passport-jwt'
-import config from './config'
+import { CustomConfig } from './index'
 
-const { secret, refreshSecret } = config().jwt
+const { secret, refreshSecret } = CustomConfig().jwt
 
 export const jwtStrategyConfig = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
