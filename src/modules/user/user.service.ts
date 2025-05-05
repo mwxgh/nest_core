@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto'
 import { PrismaService } from '../prisma/prisma.service'
 import { CustomConflictException } from '@/exceptions'
 import { omitTimeStampFields } from '@/utils'
-import { User } from 'prisma/generated'
+import { User } from 'generated'
 
 @Injectable()
 export class UserService {

@@ -13,7 +13,7 @@ import {
   RequestWithContextType,
 } from '@/utils'
 import { Response } from 'express'
-import { Prisma } from 'prisma/generated'
+import { Prisma } from 'generated'
 
 @Catch(Prisma.PrismaClientKnownRequestError, NotFoundException)
 export class EntityNotfoundFilter implements ExceptionFilter<HttpException> {

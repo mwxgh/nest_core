@@ -9,7 +9,7 @@ import { CustomConfig } from '@/configs'
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston'
 import { Logger } from 'winston'
 import { LoggerConstant } from '@/constants'
-import { Prisma, PrismaClient } from 'prisma/generated/client'
+import { Prisma, PrismaClient } from 'generated'
 
 const { url } = CustomConfig().database
 
