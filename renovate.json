@@ -14,7 +14,6 @@
   "pruneBranchAfterAutomerge": true,
   "postUpdateOptions": ["pnpmDedupe"],
   "postUpgradeTasks": {
-    "commands": ["pnpm install"],
     "fileFilters": ["package.json", "pnpm-lock.yaml"]
   }
 }
