@@ -7,13 +7,13 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { ErrorMessage } from '@/messages'
-import { Prisma } from '@prisma/client'
 import {
   createStore,
   ExceptionFilterType,
   RequestWithContextType,
 } from '@/utils'
 import { Response } from 'express'
+import { Prisma } from 'prisma/generated'
 
 @Catch(Prisma.PrismaClientKnownRequestError, NotFoundException)
 export class EntityNotfoundFilter implements ExceptionFilter<HttpException> {

@@ -1,9 +1,9 @@
 import { AbstractDto, PageDto, PageMetaDto } from '@commons/dtos'
-import { UserRole } from '@prisma/client'
 import { compact, map } from 'lodash'
 import type { Logger } from 'winston'
 import { AsyncLocalStorage } from 'async_hooks'
 import { AsyncRequestContext } from '@/shared/async-context-request'
+import { UserRole } from 'prisma/generated'
 
 export type ObjectType = Record<string, unknown>
 

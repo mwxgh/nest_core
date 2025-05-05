@@ -1,4 +1,3 @@
-import { UserRole, UserStatus } from '@prisma/client'
 import {
   EmailField,
   EnumField,
@@ -6,6 +5,7 @@ import {
   StringField,
 } from '@commons/decorators'
 import { EntityConstant } from '@/constants'
+import { UserRole, UserStatus } from 'prisma/generated'
 
 export class CreateUserDto {
   @StringField({ maxLength: EntityConstant.EntityUserNameLength })
