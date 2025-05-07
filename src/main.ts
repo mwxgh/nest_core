@@ -22,18 +22,19 @@ import {
   UnprocessableFilter,
 } from './commons/filters'
 import { LoggerRequestGuard } from './commons/guards/logger-request.guard'
+import { NestExpressApplication } from '@nestjs/platform-express'
+import { Logger } from 'winston'
 
 const { port } = CustomConfig().app
 
 const bootstrap = async () => {
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create<NestExpressApplication>(AppModule)
 
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER))
 
   const filterParam = {
     asyncRequestContext: app.get(AsyncRequestContext),
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    logger: app.get(WINSTON_MODULE_NEST_PROVIDER),
+    logger: app.get<Logger>(WINSTON_MODULE_NEST_PROVIDER),
   }
 
   app.useGlobalInterceptors(

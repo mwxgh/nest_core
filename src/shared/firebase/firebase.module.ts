@@ -1,25 +1,15 @@
-import { CustomConfig } from '@/configs'
 import { Module } from '@nestjs/common'
-import * as admin from 'firebase-admin'
-
-const { project_id, private_key, client_email } = CustomConfig().firebase
-
-const firebaseProvider = {
-  provide: 'FIREBASE_APP',
-  useFactory: () =>
-    admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId: project_id!,
-        privateKey: private_key!,
-        clientEmail: client_email!,
-      }),
-      databaseURL: `https://${project_id}.firebaseio.com`,
-      storageBucket: `${project_id}.appspot.com`,
-    }),
-}
+import { FirebaseAdminService } from './firebase-admin.service'
+import { firebaseAdminConfig, firebaseClientConfig } from '@/configs'
+import { FirebaseClientService } from './firebase-client.service'
 
 @Module({
-  providers: [firebaseProvider],
-  exports: [firebaseProvider],
+  providers: [
+    firebaseAdminConfig,
+    firebaseClientConfig,
+    FirebaseAdminService,
+    FirebaseClientService,
+  ],
+  exports: [FirebaseAdminService, FirebaseClientService],
 })
 export class FirebaseModule {}

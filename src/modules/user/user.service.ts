@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto'
 import { PrismaService } from '../prisma/prisma.service'
 import { CustomConflictException } from '@/exceptions'
 import { omitTimeStampFields } from '@/utils'
-import { User } from '@prisma'
+import { Prisma, User } from '@prisma'
 
 @Injectable()
 export class UserService {
@@ -30,9 +30,14 @@ export class UserService {
   async findOne(id: number): Promise<Partial<User>> {
     const user = await this.prisma.user.findUniqueOrThrow({
       where: { id },
-      omit: {
-        password: true,
-      },
+    })
+
+    return omitTimeStampFields(user)
+  }
+
+  async findWhere(where: Prisma.UserWhereInput): Promise<Partial<User>> {
+    const user = await this.prisma.user.findFirstOrThrow({
+      where,
     })
 
     return omitTimeStampFields(user)

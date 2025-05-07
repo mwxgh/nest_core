@@ -9,7 +9,10 @@ import {
 } from '@nestjs/common'
 import { UserService } from './user.service'
 import { CreateUserDto, UpdateUserDto } from './dto'
+import { Auth } from '../auth/decorators/auth.decorator'
+import { UserRole } from '@prisma'
 
+@Auth(UserRole.ADMIN)
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}

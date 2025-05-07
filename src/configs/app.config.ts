@@ -47,8 +47,10 @@ export const CustomConfig = () => ({
   },
 
   firebase: {
-    type: process.env.FIREBASE_TYPE,
+    // common
     project_id: process.env.FIREBASE_PROJECT_ID,
+    // admin
+    type: process.env.FIREBASE_TYPE,
     private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
     private_key: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
     client_email: process.env.FIREBASE_CLIENT_EMAIL,
@@ -59,5 +61,10 @@ export const CustomConfig = () => ({
       process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
     client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL,
     universe_domain: process.env.FIREBASE_UNIVERSE_DOMAIN,
+    // client
+    api_key: process.env.FIREBASE_API_KEY,
+    auth_domain: process.env.FIREBASE_AUTH_DOMAIN,
+    messaging_sender_id: process.env.FIREBASE_MESSAGING_SENDER_ID,
+    app_id: process.env.FIREBASE_APP_ID,
   },
 })

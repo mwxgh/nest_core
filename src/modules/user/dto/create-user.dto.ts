@@ -1,8 +1,8 @@
 import {
   EmailField,
-  EnumField,
   EnumFieldOptional,
   StringField,
+  StringFieldOptional,
 } from '@commons/decorators'
 import { EntityConstant } from '@/constants'
 import { UserRole, UserStatus } from '@prisma'
@@ -20,9 +20,12 @@ export class CreateUserDto {
   @EmailField({ maxLength: EntityConstant.EntityShortLength })
   readonly email: string
 
-  @EnumField(() => UserRole)
-  readonly role: UserRole
+  @EnumFieldOptional(() => UserRole)
+  readonly role?: UserRole
 
   @EnumFieldOptional(() => UserStatus)
-  readonly status: UserStatus
+  readonly status?: UserStatus
+
+  @StringFieldOptional()
+  readonly firebaseUid?: string
 }
