@@ -3,7 +3,7 @@ import { compact, map } from 'lodash'
 import type { Logger } from 'winston'
 import { AsyncLocalStorage } from 'async_hooks'
 import { AsyncRequestContext } from '@/shared/async-context-request'
-import { UserRole } from 'generated'
+import { UserRole } from '@prisma'
 
 export type ObjectType = Record<string, unknown>
 

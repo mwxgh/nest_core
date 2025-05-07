@@ -5,7 +5,7 @@ import {
   StringField,
 } from '@commons/decorators'
 import { EntityConstant } from '@/constants'
-import { UserRole, UserStatus } from 'generated'
+import { UserRole, UserStatus } from '@prisma'
 
 export class CreateUserDto {
   @StringField({ maxLength: EntityConstant.EntityUserNameLength })

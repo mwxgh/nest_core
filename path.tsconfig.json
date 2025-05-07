@@ -9,7 +9,8 @@
       "@exceptions/*": ["src/exceptions/*"],
       "@messages/*": ["src/messages/*"],
       "@shared/*": ["src/shared/*"],
-      "@utils/*": ["src/utils/*"]
+      "@utils/*": ["src/utils/*"],
+      "@prisma": ["prisma_generated"]
     }
   }
 }
