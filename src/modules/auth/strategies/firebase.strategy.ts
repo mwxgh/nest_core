@@ -19,22 +19,16 @@ export class FirebaseStrategy extends PassportStrategy(
 
   async validate(token: string) {
     try {
-      const decodedToken = await this.firebaseService.verifyIdToken(token)
-      console.log(decodedToken, 'decodedToken___________')
-      // email_verified, name, picture
-      const { uid, email, role } = decodedToken
+      const { uid, email } = await this.firebaseService.verifyIdToken(token)
 
       if (!email) {
         throw new UnauthorizedException('Firebase token does not contain email')
       }
 
-      const user = await this.userService.findWhere({
+      return await this.userService.findWhere({
         firebaseUid: uid,
         email,
-        role,
       })
-
-      return user
     } catch (error) {
       throw new UnauthorizedException(`Invalid Firebase token error : ${error}`)
     }

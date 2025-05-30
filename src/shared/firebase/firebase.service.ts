@@ -9,8 +9,7 @@ export class FirebaseService {
 
   private messaging = () => this.firebase.messaging()
 
-  private getFirestore = (): admin.firestore.Firestore =>
-    this.firebase.firestore()
+  private getFirestore = () => this.firebase.firestore()
 
   private getDatabase = () => this.firebase.database()
 
@@ -27,6 +26,14 @@ export class FirebaseService {
       return await this.auth().getUser(uid)
     } catch (error) {
       throw new Error(`Error getting Firebase user: ${error}`)
+    }
+  }
+
+  async setCustomUserClaims(uid: string, claims: object) {
+    try {
+      return await this.auth().setCustomUserClaims(uid, claims)
+    } catch (error) {
+      throw new Error(`Error set custom user claims: ${error}`)
     }
   }
 
