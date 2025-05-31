@@ -5,21 +5,20 @@ import {
 } from '@nestjs/common'
 import { UserService } from '../user/user.service'
 import { FirebaseService } from '@/shared/firebase/firebase.service'
-import { PrismaService } from '../prisma/prisma.service'
-import { LoginDto } from './dto/login.dto'
+import { LoginDto, SignupDto } from './dto/auth.dto'
+import { UserRole } from '@prisma'
 
 @Injectable()
 export class AuthService {
   constructor(
-    private prisma: PrismaService,
     private firebaseService: FirebaseService,
     private userService: UserService,
   ) {}
 
   async login(loginDto: LoginDto) {
     try {
-      const { uid } = await this.firebaseService.verifyIdToken(
-        loginDto.firebaseToken,
+      const { uid, email } = await this.firebaseService.verifyIdToken(
+        loginDto.firebaseUid,
       )
 
       if (!uid) {
@@ -27,15 +26,37 @@ export class AuthService {
       }
 
       const user = await this.userService.findWhere({
-        firebaseUid: uid,
+        email,
       })
 
-      if (!user) {
-        throw new UnauthorizedException('User Not found')
-      }
+      return user
+    } catch (error) {
+      throw new UnauthorizedException(
+        'Invalid credentials',
+        error as HttpExceptionOptions,
+      )
+    }
+  }
 
-      await this.firebaseService.setCustomUserClaims(user.firebaseUid ?? '', {
-        role: user.role,
+  async signup(signupDto: SignupDto) {
+    const { email, password, firstName, lastName } = signupDto
+    try {
+      const firebaseUser = await this.firebaseService.createUser({
+        email,
+        password,
+        displayName: `${firstName} ${lastName}`,
+      })
+
+      await this.firebaseService.setCustomUserClaims(firebaseUser.uid, {
+        role: UserRole.USER,
+      })
+
+      return await this.userService.create({
+        username: email.split('@')[0],
+        firstName,
+        lastName,
+        email,
+        firebaseUid: firebaseUser.uid,
       })
     } catch (error) {
       throw new UnauthorizedException(

@@ -156,12 +156,11 @@ model Tag {
 model User {
   id          Int        @id @default(autoincrement()) @db.UnsignedInt
   role        UserRole   @default(USER)
-  firstName   String     @map("first_name") @db.VarChar(255)
-  lastName    String     @map("last_name") @db.VarChar(255)
+  firstName   String?     @map("first_name") @db.VarChar(255)
+  lastName    String?     @map("last_name") @db.VarChar(255)
   username    String     @db.VarChar(255)
-  displayName String     @map("display_name") @db.VarChar(255)
   firebaseUid String?    @map("firebase_uid") @db.VarChar(255)
-  email       String?    @db.VarChar(255)
+  email       String    @db.VarChar(255)
   status      UserStatus @default(ACTIVE)
   createdBy   Int?       @map("created_by") @db.UnsignedInt
   updatedBy   Int?       @map("updated_by") @db.UnsignedInt
@@ -177,6 +176,7 @@ model User {
 
   @@unique([username])
   @@unique([email])
+  @@index([firebaseUid])
   @@map("users")
 }
 

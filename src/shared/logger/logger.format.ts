@@ -58,8 +58,7 @@ export const loggerFormat = (asyncContext: AsyncRequestContext): Format =>
       applyColor(`[${level.toUpperCase()}]`),
       ...Object.values(logFields)
         .filter((value) => value !== 'N/A')
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        .map((value) => applyColor(`[${value}]`)),
+        .map((value) => applyColor(`[${String(value)}]`)),
       formattedMessage,
     ]
 
