@@ -4,9 +4,10 @@ import { AuthController } from './auth.controller'
 import { FirebaseStrategy } from './strategies/firebase.strategy'
 import { UserService } from '../user/user.service'
 import { FirebaseModule } from '@/shared/firebase/firebase.module'
+import { PrismaModule } from '../prisma/prisma.module'
 
 @Module({
-  imports: [FirebaseModule],
+  imports: [PrismaModule, FirebaseModule],
   controllers: [AuthController],
   providers: [AuthService, FirebaseStrategy, UserService],
 })
