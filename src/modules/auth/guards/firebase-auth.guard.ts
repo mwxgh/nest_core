@@ -17,6 +17,10 @@ export class FirebaseAuthGuard implements CanActivate {
     private userService: UserService,
     private reflector: Reflector,
   ) {}
+  private extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = request.headers.authorization?.split(' ') ?? []
+    return type === 'Bearer' ? token : undefined
+  }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC, [
@@ -36,11 +40,14 @@ export class FirebaseAuthGuard implements CanActivate {
     }
 
     try {
-      const decodedToken = await this.firebaseService.verifyIdToken(token)
+      const firebaseUid = token
+      // const decodedToken = await this.firebaseService.getUser(token)
+
+      // console.log(decodedToken, ' decodedToken_________________')
 
       const user = await this.userService.findWhere({
-        firebaseUid: decodedToken.uid,
-        email: decodedToken.email,
+        firebaseUid,
+        // email: decodedToken.email,
       })
 
       request.user = user
@@ -49,10 +56,5 @@ export class FirebaseAuthGuard implements CanActivate {
     } catch (error) {
       throw new UnauthorizedException(`Invalid token: ${error}`)
     }
-  }
-
-  private extractTokenFromHeader(request: Request): string | undefined {
-    const [type, token] = request.headers.authorization?.split(' ') ?? []
-    return type === 'Bearer' ? token : undefined
   }
 }
