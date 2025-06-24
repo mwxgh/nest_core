@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
+import { UserRole } from '@prisma'
 import * as admin from 'firebase-admin'
 
 @Injectable()
@@ -15,7 +16,9 @@ export class FirebaseAdminService {
 
   private getDatabase = () => this.firebaseAdmin.database()
 
-  async verifyIdToken(token: string): Promise<admin.auth.DecodedIdToken> {
+  async verifyIdToken(
+    token: string,
+  ): Promise<admin.auth.DecodedIdToken & { role?: UserRole }> {
     try {
       return await this.auth().verifyIdToken(token)
     } catch (error) {
