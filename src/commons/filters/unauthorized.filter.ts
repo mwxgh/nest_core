@@ -10,9 +10,7 @@ import { ExceptionFilterType } from '@/utils'
 import { Response } from 'express'
 
 @Catch(UnauthorizedException)
-export class UnauthorizedFilter
-  implements ExceptionFilter<UnauthorizedException>
-{
+export class UnauthorizedFilter implements ExceptionFilter<UnauthorizedException> {
   constructor(private readonly filterParam: ExceptionFilterType) {}
 
   catch(_: UnauthorizedException, host: ArgumentsHost) {

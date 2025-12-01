@@ -86,9 +86,10 @@ export interface IAbstractEntity<DTO, O = never> {
   toDto(options?: O): DTO
 }
 
-export abstract class AbstractEntity<DTO = unknown, O = never>
-  implements IAbstractEntity<DTO, O>
-{
+export abstract class AbstractEntity<
+  DTO = unknown,
+  O = never,
+> implements IAbstractEntity<DTO, O> {
   id: number
   createdAt: Date
   updatedAt: Date

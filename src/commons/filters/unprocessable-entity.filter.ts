@@ -13,9 +13,7 @@ type IndexedValidationError = {
 type EntityName = keyof typeof Attributes
 
 @Catch(UnprocessableEntityException)
-export class UnprocessableFilter
-  implements ExceptionFilter<UnprocessableEntityException>
-{
+export class UnprocessableFilter implements ExceptionFilter<UnprocessableEntityException> {
   constructor(private readonly filterParam: ExceptionFilterType) {}
 
   catch(exception: UnprocessableEntityException, host: ArgumentsHost) {
