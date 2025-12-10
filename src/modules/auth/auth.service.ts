@@ -6,8 +6,9 @@ import {
 import { UserService } from '../user/user.service'
 import { FirebaseAdminService } from '@/shared/firebase/firebase-admin.service'
 import { LoginDto, LoginResponseDto, SignupDto } from './dto/auth.dto'
-import { UserRole } from '@prisma'
+
 import { FirebaseClientService } from '@/shared/firebase/firebase-client.service'
+import { RoleType } from '@orm/enums'
 
 @Injectable()
 export class AuthService {
@@ -27,13 +28,11 @@ export class AuthService {
       })
 
       await this.firebaseAdminService.setCustomUserClaims(firebaseUser.uid, {
-        role: UserRole.USER,
+        roles: [RoleType.ADMIN],
       })
 
       return await this.userService.create({
-        username: email.split('@')[0],
-        firstName,
-        lastName,
+        name: `${firstName} ${lastName}`,
         email,
         firebaseUid: firebaseUser.uid,
       })

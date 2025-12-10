@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { UserRole } from '@prisma'
+
 import * as admin from 'firebase-admin'
+import { RoleType } from '@orm/enums'
 
 @Injectable()
 export class FirebaseAdminService {
@@ -18,7 +19,7 @@ export class FirebaseAdminService {
 
   async verifyIdToken(
     token: string,
-  ): Promise<admin.auth.DecodedIdToken & { role?: UserRole }> {
+  ): Promise<admin.auth.DecodedIdToken & { roles?: RoleType[] }> {
     try {
       return await this.auth().verifyIdToken(token)
     } catch (error) {

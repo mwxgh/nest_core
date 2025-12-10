@@ -71,6 +71,7 @@ const bootstrap = async () => {
       exceptionFactory: (errors) => new UnprocessableEntityException(errors),
     }),
   )
+  app.enableCors()
 
   // Setup swagger
   setupSwagger(app)

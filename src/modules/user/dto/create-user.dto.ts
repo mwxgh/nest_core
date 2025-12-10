@@ -5,23 +5,17 @@ import {
   StringFieldOptional,
 } from '@commons/decorators'
 import { EntityConstant } from '@/constants'
-import { UserRole, UserStatus } from '@prisma'
+import { RoleType, UserStatus } from '@orm/enums'
 
 export class CreateUserDto {
   @StringField({ maxLength: EntityConstant.EntityUserNameLength })
-  readonly firstName: string
-
-  @StringField({ maxLength: EntityConstant.EntityUserNameLength })
-  readonly lastName: string
-
-  @StringField({ maxLength: EntityConstant.EntityUserNameLength })
-  readonly username: string
+  readonly name: string
 
   @EmailField({ maxLength: EntityConstant.EntityShortLength })
   readonly email: string
 
-  @EnumFieldOptional(() => UserRole)
-  readonly role?: UserRole
+  @EnumFieldOptional(() => RoleType)
+  readonly role?: RoleType
 
   @EnumFieldOptional(() => UserStatus)
   readonly status?: UserStatus

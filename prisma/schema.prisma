@@ -5,8 +5,9 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
-  output   = "../prisma_generated"
+  provider   = "prisma-client"
+  output     = "../prisma_generated"
+  engineType = "client"
 }
 
 datasource db {
@@ -162,7 +163,7 @@ model User {
   updatedAt   DateTime   @updatedAt @map("updated_at")
   deletedAt   DateTime?  @map("deleted_at") @db.DateTime()
 
-  roles            UserRole[]
+  userRoles        UserRole[]
   createdComments  Comment[]  @relation("commentCreator")
   acceptedComments Comment[]  @relation("commentAcceptor")
   releasedContents Content[]  @relation("contentReleaser")
@@ -181,9 +182,10 @@ model Role {
   createdAt   DateTime @default(now()) @map("created_at") @db.DateTime(0)
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  users       UserRole[]
+  userRoles   UserRole[]
   permissions RolePermission[]
 
+  @@unique([name])
   @@map("roles")
 }
 

@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto'
 import { PrismaService } from '../prisma/prisma.service'
 import { CustomConflictException } from '@/exceptions'
 import { omitTimeStampFields } from '@/utils'
-import { Prisma, User } from '@prisma'
+import { Prisma, User } from '@orm/client'
 
 @Injectable()
 export class UserService {
@@ -12,7 +12,7 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto) {
     const existingUser = await this.prisma.user.findUnique({
-      where: { email: createUserDto.email, username: createUserDto.username },
+      where: { email: createUserDto.email },
     })
     if (existingUser) {
       throw new CustomConflictException('username or email')

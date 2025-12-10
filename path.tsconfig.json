@@ -10,7 +10,7 @@
       "@messages/*": ["src/messages/*"],
       "@shared/*": ["src/shared/*"],
       "@utils/*": ["src/utils/*"],
-      "@prisma": ["prisma_generated"]
+      "@orm/*": ["prisma_generated/*"]
     }
   }
 }

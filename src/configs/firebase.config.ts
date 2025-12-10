@@ -19,9 +19,9 @@ export const firebaseAdminConfig = {
     admin.initializeApp(
       {
         credential: admin.credential.cert({
-          projectId: project_id!,
-          privateKey: private_key!,
-          clientEmail: client_email!,
+          projectId: project_id,
+          privateKey: private_key,
+          clientEmail: client_email,
         }),
         databaseURL: `https://${project_id}.firebaseio.com`,
         storageBucket: `${project_id}.appspot.com`,
@@ -35,8 +35,8 @@ export const firebaseClientConfig = {
   useFactory: () =>
     initializeApp(
       {
-        apiKey: api_key!,
-        projectId: project_id!,
+        apiKey: api_key,
+        projectId: project_id,
         authDomain: auth_domain ?? `${project_id}.firebaseapp.com`,
         storageBucket: `${project_id}.appspot.com`,
         messagingSenderId: messaging_sender_id!,

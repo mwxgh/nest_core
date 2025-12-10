@@ -3,7 +3,7 @@ import { compact, map } from 'lodash'
 import type { Logger } from 'winston'
 import { AsyncLocalStorage } from 'async_hooks'
 import { AsyncRequestContext } from '@/shared/async-context-request'
-import { UserRole } from '@prisma'
+import { RoleType } from '@orm/enums'
 
 export type ObjectType = Record<string, unknown>
 
@@ -30,14 +30,19 @@ export interface AsyncContextModuleOptions {
 export type Constructor<T, Arguments extends unknown[] = undefined[]> = new (
   ...arguments_: Arguments
 ) => T
-export interface User {
+
+export interface IRole {
+  name: RoleType
+}
+
+export interface IUser {
   id: number
-  role: UserRole
+  roles: RoleType[]
   email?: string
 }
 
 export interface RequestWithUser extends Request {
-  user?: User
+  user?: IUser
 }
 
 export type RequestWithContextType = RequestWithUser & {

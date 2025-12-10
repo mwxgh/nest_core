@@ -1,5 +1,5 @@
 import { ROLES } from '@/constants'
-import { RequestWithUser } from '@/utils'
+import { IUser, RequestWithUser } from '@/utils'
 import {
   Injectable,
   CanActivate,
@@ -7,34 +7,39 @@ import {
   ForbiddenException,
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { UserRole } from '@prisma'
+import { RoleType } from '@orm/enums'
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredRoles = this.reflector.getAllAndOverride<UserRole[]>(ROLES, [
+    const contextRoles = this.reflector.getAllAndOverride<RoleType[]>(ROLES, [
       context.getHandler(),
       context.getClass(),
     ])
 
-    if (!requiredRoles) {
-      return true
-    }
+    if (!contextRoles) return true
+
     const request = context.switchToHttp().getRequest<RequestWithUser>()
-    const user = request.user
+    const user: IUser | undefined = request.user
 
     if (!user) {
       throw new ForbiddenException('User not authenticated')
     }
 
-    if (requiredRoles.includes(user.role)) {
-      return true
+    if (!Array.isArray(user.roles) || user.roles.length === 0) {
+      throw new ForbiddenException('User has no roles')
     }
 
-    throw new ForbiddenException(
-      `Role ${user.role} is not authorized to access this resource`,
-    )
+    const userRoleNames = user.roles
+
+    const hasRole = contextRoles.some((role) => userRoleNames.includes(role))
+
+    if (!hasRole) {
+      throw new ForbiddenException('User does not have required role')
+    }
+
+    return true
   }
 }

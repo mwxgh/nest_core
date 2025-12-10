@@ -10,9 +10,9 @@ import {
 import { UserService } from './user.service'
 import { CreateUserDto, UpdateUserDto } from './dto'
 import { Auth } from '../auth/decorators/auth.decorator'
-import { UserRole } from '@prisma'
+import { RoleType } from '@orm/enums'
 
-@Auth(UserRole.ADMIN)
+@Auth(RoleType.ADMIN)
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
