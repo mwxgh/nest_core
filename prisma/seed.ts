@@ -1,5 +1,10 @@
 import 'dotenv/config'
-import { PrismaClient, RoleType } from '../prisma_generated/client'
+import {
+  ActionManageType,
+  PrismaClient,
+  ResourceManageType,
+  RoleType,
+} from '../prisma_generated/client'
 import { PrismaMariaDb } from '@prisma/adapter-mariadb'
 
 const adapter = new PrismaMariaDb({
@@ -14,17 +19,44 @@ const prisma = new PrismaClient({ adapter })
 
 const main = async () => {
   const roles = Object.values(RoleType)
-
-  for (const role of roles) {
-    await prisma.role.upsert({
-      where: { name: role },
-      update: {},
-      create: {
-        name: role,
-        description: `${role} role`,
-      },
-    })
+  const resources = Object.values(ResourceManageType)
+  const actions = Object.values(ActionManageType)
+  const roleDescriptions: Record<RoleType, string> = {
+    [RoleType.ADMIN]:
+      'Admin: full control to manage settings, users, and content',
+    [RoleType.EDITOR]:
+      'Editor: curates and approves content, keeping quality high',
+    [RoleType.AUTHOR]:
+      'Author: creates original content and keeps it up to date',
+    [RoleType.CONTRIBUTOR]: 'Contributor: submits drafts and ideas for review',
+    [RoleType.SUBSCRIBER]:
+      'Subscriber: reads content and engages with the community',
   }
+
+  await prisma.role.createMany({
+    data: roles.map((name) => {
+      const description = roleDescriptions[name]
+      return { name, description }
+    }),
+    skipDuplicates: true,
+  })
+
+  const permissionData = resources.flatMap((resource) =>
+    actions
+      .filter((action) => {
+        const isAllAll =
+          resource === ResourceManageType.ALL && action === ActionManageType.ALL
+        const isValidSpecific = resource !== ResourceManageType.ALL
+
+        return isAllAll || isValidSpecific
+      })
+      .map((action) => ({ resource, action })),
+  )
+
+  await prisma.permission.createMany({
+    data: permissionData,
+    skipDuplicates: true,
+  })
 }
 
 main()

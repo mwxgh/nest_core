@@ -189,42 +189,16 @@ model Role {
   @@map("roles")
 }
 
-model Resource {
-  id        Int      @id @default(autoincrement()) @db.UnsignedInt
-  type      String
-  createdAt DateTime @default(now()) @map("created_at") @db.DateTime(0)
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  permissions Permission[]
-
-  @@unique([type])
-  @@map("resouces")
-}
-
-model Action {
-  id        Int      @id @default(autoincrement()) @db.UnsignedInt
-  name      String
-  createdAt DateTime @default(now()) @map("created_at") @db.DateTime(0)
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  permissions Permission[]
-
-  @@unique([name])
-  @@map("actions")
-}
-
 model Permission {
-  id         Int      @id @default(autoincrement()) @db.UnsignedInt
-  resourceId Int      @db.UnsignedInt
-  actionId   Int      @db.UnsignedInt
-  createdAt  DateTime @default(now()) @map("created_at") @db.DateTime(0)
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  id        Int                 @id @default(autoincrement()) @db.UnsignedInt
+  resource  ResourceManageType?
+  action    ActionManageType?
+  createdAt DateTime            @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt DateTime            @updatedAt @map("updated_at")
 
-  roles   RolePermission[]
-  action  Action           @relation(fields: [actionId], references: [id], onDelete: Cascade)
-  resouce Resource         @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  roles RolePermission[]
 
-  @@unique([resourceId, actionId])
+  @@unique([resource, action])
   @@map("permissions")
 }
 
@@ -301,9 +275,24 @@ model MediaRelation {
 }
 
 // enum
+enum ResourceManageType {
+  ALL
+  USER
+  PRODUCT
+  POST
+}
+
 enum ResourceType {
   PRODUCT
   POST
+}
+
+enum ActionManageType {
+  ALL
+  CREATE
+  READ
+  UPDATE
+  DELETE
 }
 
 enum RoleType {
