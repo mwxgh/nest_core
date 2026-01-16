@@ -73,7 +73,7 @@ importers:
         version: 13.6.0
       libphonenumber-js:
         specifier: ^1.12.31
-        version: 1.12.33
+        version: 1.12.34
       logform:
         specifier: ^2.7.0
         version: 2.7.0
@@ -2531,8 +2531,8 @@ packages:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
     engines: {node: '>= 0.8.0'}
 
-  libphonenumber-js@1.12.33:
-    resolution: {integrity: sha512-r9kw4OA6oDO4dPXkOrXTkArQAafIKAU71hChInV4FxZ69dxCfbwQGDPzqR5/vea94wU705/3AZroEbSoeVWrQw==}
+  libphonenumber-js@1.12.34:
+    resolution: {integrity: sha512-v/Ip8k8eYdp7bINpzqDh46V/PaQ8sK+qi97nMQgjZzFlb166YFqlR/HVI+MzsI9JqcyyVWCOipmmretiaSyQyw==}
 
   lilconfig@2.1.0:
     resolution: {integrity: sha512-utWOt/GHzuUxnLKxB6dk81RoOeoNeHgbrXiuGk4yyF5qlRz+iIVWu56E2fqGHFrXz0QNUhLB/8nKqvRH66JKGQ==}
@@ -5450,7 +5450,7 @@ snapshots:
   class-validator@0.14.3:
     dependencies:
       '@types/validator': 13.15.10
-      libphonenumber-js: 1.12.33
+      libphonenumber-js: 1.12.34
       validator: 13.15.23
 
   cli-boxes@2.2.1: {}
@@ -6469,7 +6469,7 @@ snapshots:
       prelude-ls: 1.2.1
       type-check: 0.4.0
 
-  libphonenumber-js@1.12.33: {}
+  libphonenumber-js@1.12.34: {}
 
   lilconfig@2.1.0: {}
 
